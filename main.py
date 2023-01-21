@@ -17,6 +17,7 @@ import math
 import socket
 import struct
 import threading
+from GlobalVars import *
 
 LFSSteerAngle = 24
 CorrectionFactor = 0.9
@@ -54,11 +55,11 @@ def my_callback(client, target, large_motor, small_motor, led_number, user_data)
 CurrentSlipAngle = 0
 PrevSlipAngle = 0
 LastChangeTime = time.time()
-def GetSlipAngles():
+def GetOutsimData():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(('127.0.0.1', 30000))
     sock.settimeout(0.2)
-    global CurrentSlipAngle
+    global OutsimData
     while True:
         try:
             data = sock.recv(280)
@@ -69,37 +70,43 @@ def GetSlipAngles():
         else:
             # print(data)
             outsim_pack = struct.unpack("7f4b2f7f4b2f7f4b2f7f4b2f", data)
-            wheel0 = outsim_pack[12]
-            wheel1 = outsim_pack[25]
-            wheel2 = outsim_pack[38]
-            wheel3 = outsim_pack[51]
-            wheelspeed2 = outsim_pack[31]
-            wheelspeed3 = outsim_pack[44]
-            touchingground0 = outsim_pack[9]
-            touchingground1 = outsim_pack[22]
-            #print(touchingground0," ", touchingground1)
+            OutsimData.wheel0slipangle = outsim_pack[12]
+            OutsimData.wheel1slipangle = outsim_pack[25]
+            OutsimData.wheel2slipangle = outsim_pack[38]
+            OutsimData.wheel3slipangle = outsim_pack[51]
+            OutsimData.wheelspeed2 = outsim_pack[31]
+            OutsimData.wheelspeed3 = outsim_pack[44]
+            OutsimData.touchingground0 = outsim_pack[9]
+            OutsimData.touchingground1 = outsim_pack[22]
+            #print("outsimdata", OutsimData.wheelspeed3)
 
-            CurrentSlipAngleTMP = 0
-            if (wheelspeed3+wheelspeed3) /2 >MinimumSpeedSteerCorrect:
-                CurrentSlipAngleTMP = (wheel0 * 57.2958 + wheel1 * 57.2958) / 2
-            else:
-                CurrentSlipAngleTMP=0
+def UpdateControlChanges():
+    global OutsimData
+    global CurrentSlipAngle
+    print(str(OutsimData.wheelspeed3))
+    OutsimData().wheelspeed3=333
+    while True:
+        if (OutsimData().wheelspeed3 + OutsimData().wheelspeed2) / 2 > MinimumSpeedSteerCorrect:
+            currentSlipAngleTMP = (OutsimData().wheel0slipangle * 57.2958 + OutsimData().wheel1slipangle * 57.2958) / 2
+        else:
+            currentSlipAngleTMP = 0
 
-            if touchingground0 == 0 and touchingground1 == 0:
-                CurrentSlipAngleTMP = 0
-            else:
-                if touchingground0 ==0 or touchingground1 ==0:
-                    CurrentSlipAngleTMP = (wheel0 * 57.2958*touchingground0 + wheel1 * 57.2958*touchingground1)
-            CurrentSlipAngle = CurrentSlipAngleTMP
-        #print(CurrentSlipAngle)
+        if OutsimData().touchingground0 == 0 and OutsimData().touchingground1 == 0:
+            currentSlipAngleTMP = 0
+        else:
+            if OutsimData().touchingground0 == 0 or OutsimData().touchingground1 == 0:
+                CurrentSlipAngleTMP = (OutsimData().wheel0slipangle * 57.2958 * OutsimData().touchingground0 + OutsimData().wheel1slipangle * 57.2958 * OutsimData().touchingground1)
+        print("updatecontrolchanges",OutsimData().wheelspeed3)
+        CurrentSlipAngle = currentSlipAngleTMP
 
-# Press the green button in the gutter to run the script.
+
 if __name__ == '__main__':
-
-    OutSimThread = threading.Thread(target=GetSlipAngles)
+    time.sleep(1)
+    OutSimThread = threading.Thread(target=GetOutsimData)
+    UpdateControlChangesThread = threading.Thread(target=UpdateControlChanges)
     print(777)
     OutSimThread.start()
-
+    UpdateControlChangesThread.start()
     laststeervalue = 0
     NonLinearSteerValue=0
     XInput.set_deadzone(XInput.DEADZONE_LEFT_THUMB, 0)
@@ -146,7 +153,7 @@ if __name__ == '__main__':
         if SmallFFB >= 0.95:
             BigFFB = SmallFFB
         XInput.set_vibration(0,SmallFFB,0)
-        print(SmallFFB)
+        #print(CorrectedSteering," ",CurrentSlipAngle)
         events = XInput.get_events()
         for event in events:
             if event.user_index == 0:
@@ -156,7 +163,7 @@ if __name__ == '__main__':
                         laststeervalue = float(event.x)
                         NonLinearSteerValue = math.copysign(pow(abs(laststeervalue),NonLinearity),laststeervalue)
 
-       # time.sleep(0.1)
+        time.sleep(0.0001)
 
     input()
 
