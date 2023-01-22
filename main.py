@@ -29,7 +29,7 @@ def clamp(num, min_value, max_value):
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-FFB = 0
+
 def my_callback(client, target, large_motor, small_motor, led_number, user_data):
     """
     Callback function triggered at each received state change
@@ -41,15 +41,14 @@ def my_callback(client, target, large_motor, small_motor, led_number, user_data)
     :param led_number: integer in [0, 255] representing the state of the LED ring
     :param user_data: placeholder, do not use
     """
-    global FFB
+    global InternalVars
     # Do your things here. For instance:
-    FFB = small_motor
+    InternalVars.FFB = small_motor
    # print(f"Received notification for client {client}, target {target}")
    # print(f"large motor: {large_motor}, small motor: {small_motor}")
  #   print(f"led number: {led_number}")
-CurrentSlipAngle = 0
-PrevSlipAngle = 0
-LastChangeTime = time.time()
+
+
 def GetOutsimData():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(('127.0.0.1', 30000))
@@ -61,7 +60,10 @@ def GetOutsimData():
         except:
             data = None
         if not data:
-           CurrentSlipAngle = 0
+            print("timoeut")
+            for key in vars(OutsimData):
+                if not key.startswith("__"):
+                    setattr(OutsimData, key, 0)
         else:
             # print(data)
             outsim_pack = struct.unpack("7f4b2f7f4b2f7f4b2f7f4b2f", data)
@@ -77,9 +79,7 @@ def GetOutsimData():
 
 def UpdateControlChanges():
     global OutsimData
-    global CurrentSlipAngle
-    print(str(OutsimData.wheelspeed3))
-    OutsimData().wheelspeed3=333
+    global InternalVars
     while True:
         if (OutsimData().wheelspeed3 + OutsimData().wheelspeed2) / 2 > Settings().MinimumSpeedSteerCorrect:
             currentSlipAngleTMP = (OutsimData().wheel0slipangle * 57.2958 + OutsimData().wheel1slipangle * 57.2958) / 2
@@ -92,12 +92,13 @@ def UpdateControlChanges():
             if OutsimData().touchingground0 == 0 or OutsimData().touchingground1 == 0:
                 CurrentSlipAngleTMP = (OutsimData().wheel0slipangle * 57.2958 * OutsimData().touchingground0 + OutsimData().wheel1slipangle * 57.2958 * OutsimData().touchingground1)
         print("updatecontrolchanges",OutsimData().wheelspeed3)
-        CurrentSlipAngle = currentSlipAngleTMP
+        InternalVars.CurrentSlipAngle = currentSlipAngleTMP
+        time.sleep(0.01)
 
 
 if __name__ == '__main__':
 
-
+    global InternalVars
     subprocess.run(["python", "GUI.py"])
     time.sleep(1)
     OutSimThread = threading.Thread(target=GetOutsimData)
@@ -126,10 +127,10 @@ if __name__ == '__main__':
 
         #print("\r", CurrentSlipAngle, end="")
         CalculateSlipAngle=0
-        if abs(CurrentSlipAngle) - Settings().AllowedSlip <0:
+        if abs(InternalVars.CurrentSlipAngle) - Settings().AllowedSlip <0:
             CalculateSlipAngle = 0
         else:
-            CalculateSlipAngle = math.copysign(abs(CurrentSlipAngle)-Settings().AllowedSlip,CurrentSlipAngle)
+            CalculateSlipAngle = math.copysign(abs(InternalVars.CurrentSlipAngle)-Settings().AllowedSlip,InternalVars.CurrentSlipAngle)
 
         CalcCorrectedSteering = Settings().CorrectionFactor * (-1*CalculateSlipAngle / Settings().LFSSteerAngle)
 
@@ -143,7 +144,7 @@ if __name__ == '__main__':
         gamepad.left_joystick_float(x_value_float=CorrectedSteering, y_value_float=0.0) #setting virtual gamepad steer
         gamepad.update()
         BigFFB=0
-        SmallFFB = float(clamp(FFB / 127,0,1))
+        SmallFFB = float(clamp(InternalVars.FFB / 127,0,1))
         if SmallFFB >= 0.95:
             BigFFB = SmallFFB
         XInput.set_vibration(0,SmallFFB,0)
@@ -155,7 +156,7 @@ if __name__ == '__main__':
                     if event.stick == XInput.LEFT:
                         #print("\r",event.x , end = '')
                         laststeervalue = float(event.x)
-                        NonLinearSteerValue = math.copysign(pow(abs(laststeervalue),NonLinearity),laststeervalue)
+                        NonLinearSteerValue = math.copysign(pow(abs(laststeervalue),Settings().NonLinearity),laststeervalue)
 
         time.sleep(0.001)
 

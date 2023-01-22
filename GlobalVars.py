@@ -10,8 +10,7 @@ class OutsimData():
     wheel1slipangle = 0
     wheel2slipangle = 0
     wheel3slipangle = 0
-    def __init__(self):
-        pass
+
 
 class Settings():
     LFSSteerAngle = 24
@@ -19,3 +18,8 @@ class Settings():
     AllowedSlip = 0
     NonLinearity = 1.8
     MinimumSpeedSteerCorrect = 5
+
+
+class InternalVars():
+    FFB = 0
+    CurrentSlipAngle = 0
