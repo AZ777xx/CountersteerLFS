@@ -17,15 +17,10 @@ import math
 import socket
 import struct
 import threading
+import subprocess
 from GlobalVars import *
 
-LFSSteerAngle = 24
-CorrectionFactor = 0.9
-AllowedSlip = 0
-OverSteer = 0.5
-UnderSteer = 1.25
-NonLinearity = 1.8
-MinimumSpeedSteerCorrect=5
+
 def weird_division(n, d):
     return n / d if d else 0
 def clamp(num, min_value, max_value):
@@ -86,7 +81,7 @@ def UpdateControlChanges():
     print(str(OutsimData.wheelspeed3))
     OutsimData().wheelspeed3=333
     while True:
-        if (OutsimData().wheelspeed3 + OutsimData().wheelspeed2) / 2 > MinimumSpeedSteerCorrect:
+        if (OutsimData().wheelspeed3 + OutsimData().wheelspeed2) / 2 > Settings().MinimumSpeedSteerCorrect:
             currentSlipAngleTMP = (OutsimData().wheel0slipangle * 57.2958 + OutsimData().wheel1slipangle * 57.2958) / 2
         else:
             currentSlipAngleTMP = 0
@@ -101,6 +96,9 @@ def UpdateControlChanges():
 
 
 if __name__ == '__main__':
+
+
+    subprocess.run(["python", "GUI.py"])
     time.sleep(1)
     OutSimThread = threading.Thread(target=GetOutsimData)
     UpdateControlChangesThread = threading.Thread(target=UpdateControlChanges)
@@ -128,16 +126,12 @@ if __name__ == '__main__':
 
         #print("\r", CurrentSlipAngle, end="")
         CalculateSlipAngle=0
-        if abs(CurrentSlipAngle) - AllowedSlip <0:
+        if abs(CurrentSlipAngle) - Settings().AllowedSlip <0:
             CalculateSlipAngle = 0
         else:
-            CalculateSlipAngle = math.copysign(abs(CurrentSlipAngle)-AllowedSlip,CurrentSlipAngle)
+            CalculateSlipAngle = math.copysign(abs(CurrentSlipAngle)-Settings().AllowedSlip,CurrentSlipAngle)
 
-        CalcCorrectedSteering = CorrectionFactor * (-1*CalculateSlipAngle / LFSSteerAngle)
-        if math.copysign(1,CalcCorrectedSteering) == math.copysign(1,NonLinearSteerValue):
-            CorrectedSteering = CalcCorrectedSteering + NonLinearSteerValue* UnderSteer
-        else:
-            CorrectedSteering = CalcCorrectedSteering + NonLinearSteerValue * OverSteer
+        CalcCorrectedSteering = Settings().CorrectionFactor * (-1*CalculateSlipAngle / Settings().LFSSteerAngle)
 
         CorrectedSteering = CalcCorrectedSteering + NonLinearSteerValue
        # print(CorrectedSteering)
@@ -163,7 +157,7 @@ if __name__ == '__main__':
                         laststeervalue = float(event.x)
                         NonLinearSteerValue = math.copysign(pow(abs(laststeervalue),NonLinearity),laststeervalue)
 
-        time.sleep(0.0001)
+        time.sleep(0.001)
 
     input()
 

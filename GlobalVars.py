@@ -12,3 +12,10 @@ class OutsimData():
     wheel3slipangle = 0
     def __init__(self):
         pass
+
+class Settings():
+    LFSSteerAngle = 24
+    CorrectionFactor = 0.9
+    AllowedSlip = 0
+    NonLinearity = 1.8
+    MinimumSpeedSteerCorrect = 5
