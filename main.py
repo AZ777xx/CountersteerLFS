@@ -1,7 +1,3 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 """
 OutSim Mode 2
 OutSim Delay 5
@@ -11,16 +7,10 @@ OutSim ID 0
 OutSim Opts 80
 """
 import sys
-
-import vgamepad as vg
-import XInput
-import time
-import math
 import socket
 import struct
 import threading
-import subprocess
-import multiprocessing
+
 
 import GUI
 from GlobalVars import *
@@ -28,15 +18,8 @@ from CalculateCarData import CalculateCarDataF
 from GamePads import HandleGamepads
 
 
-
 def weird_division(n, d):
     return n / d if d else 0
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
 
 def GetOutsimData():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -68,45 +51,19 @@ def GetOutsimData():
             OutsimData.wheel2steer = outsim_pack[27]
             #print("outsimdata", OutsimData.wheelspeed3)
 
-
-
-
 if __name__ == '__main__':
     global InternalVar
-    NonLinearSteerValue=0
-    GUIThread = threading.Thread(target=GUI.RunGUI)
     OutSimThread = threading.Thread(target=GetOutsimData, daemon=True)
     UpdateControlChangesThread = threading.Thread(target=CalculateCarDataF, daemon=True)
     GamepadsThread = threading.Thread(target=HandleGamepads,daemon = True)
     print(777)
     OutSimThread.start()
     UpdateControlChangesThread.start()
-    GUIThread.start()
     GamepadsThread.start()
 
 
-
-
-
-
-
-    FFBtest = 0
-    while True:
-       # print(laststeervalue)
-
-
-
-        #print("\r", CurrentSlipAngle, end="")
-
-
-
-
-        time.sleep(0.001)
-        if InternalVars.ClosingApp ==1:
-
-            print("exit")
-            GUIThread.join()
-            sys.exit(1)
+    GUI.RunGUI()
+    sys.exit(1)
 
     input()
 

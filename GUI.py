@@ -50,7 +50,5 @@ def RunGUI():
     root.after(300, GUIWrite)
     root.mainloop()
     root.quit()
-
-
     InternalVars.ClosingApp = 1
 
