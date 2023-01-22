@@ -49,6 +49,7 @@ def RunGUI():
     root.resizable(False,False)
     root.after(300, GUIWrite)
     root.mainloop()
+    root.quit()
 
 
     InternalVars.ClosingApp = 1

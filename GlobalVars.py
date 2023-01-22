@@ -28,3 +28,9 @@ class InternalVars():
     CurrentSlipAngle = 0
     LFSMaxMeasuredSteeringAngle = -333
     ClosingApp = 0
+    NonLinearSteerValue = 0
+    CorrectedSteering=0
+
+class GamePadData():
+    RealGamepadSteer=0
+    FakeGamepadFFB=0

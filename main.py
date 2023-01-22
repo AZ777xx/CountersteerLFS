@@ -24,34 +24,18 @@ import multiprocessing
 
 import GUI
 from GlobalVars import *
+from CalculateCarData import CalculateCarDataF
+from GamePads import HandleGamepads
+
 
 
 def weird_division(n, d):
     return n / d if d else 0
-def clamp(num, min_value, max_value):
-   return max(min(num, max_value), min_value)
+
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-def my_callback(client, target, large_motor, small_motor, led_number, user_data):
-    """
-    Callback function triggered at each received state change
-
-    :param client: vigem bus ID
-    :param target: vigem device ID
-    :param large_motor: integer in [0, 255] representing the state of the large motor
-    :param small_motor: integer in [0, 255] representing the state of the small motor
-    :param led_number: integer in [0, 255] representing the state of the LED ring
-    :param user_data: placeholder, do not use
-    """
-    global InternalVars
-    # Do your things here. For instance:
-    InternalVars.FFB = small_motor
-   # print(f"Received notification for client {client}, target {target}")
-   # print(f"large motor: {large_motor}, small motor: {small_motor}")
- #   print(f"led number: {led_number}")
 
 
 def GetOutsimData():
@@ -84,55 +68,28 @@ def GetOutsimData():
             OutsimData.wheel2steer = outsim_pack[27]
             #print("outsimdata", OutsimData.wheelspeed3)
 
-def UpdateControlChanges():
-    global OutsimData
-    global InternalVars
-    while True:
 
-        tmpMeasureSteerAngle = abs(OutsimData.wheel3steer)
-        if tmpMeasureSteerAngle < abs(OutsimData.wheel2steer):
-            tmpMeasureSteerAngle= abs(OutsimData.wheel2steer)
-        if tmpMeasureSteerAngle> InternalVars.LFSMaxMeasuredSteeringAngle:
-            InternalVars.LFSMaxMeasuredSteeringAngle = tmpMeasureSteerAngle
-
-
-        if (OutsimData().wheelspeed3 + OutsimData().wheelspeed2) / 2 > Settings().MinimumSpeedSteerCorrect:
-            currentSlipAngleTMP = (OutsimData().wheel0slipangle * 57.2958 + OutsimData().wheel1slipangle * 57.2958) / 2
-        else:
-            currentSlipAngleTMP = 0
-
-        if OutsimData().touchingground0 == 0 and OutsimData().touchingground1 == 0:
-            currentSlipAngleTMP = 0
-        else:
-            if OutsimData().touchingground0 == 0 or OutsimData().touchingground1 == 0:
-                CurrentSlipAngleTMP = (OutsimData().wheel0slipangle * 57.2958 * OutsimData().touchingground0 + OutsimData().wheel1slipangle * 57.2958 * OutsimData().touchingground1)
-        #print("updatecontrolchanges",OutsimData().wheelspeed3)
-        InternalVars.CurrentSlipAngle = currentSlipAngleTMP
-        time.sleep(0.01)
 
 
 if __name__ == '__main__':
-
     global InternalVar
+    NonLinearSteerValue=0
     GUIThread = threading.Thread(target=GUI.RunGUI)
     OutSimThread = threading.Thread(target=GetOutsimData, daemon=True)
-    UpdateControlChangesThread = threading.Thread(target=UpdateControlChanges, daemon=True)
+    UpdateControlChangesThread = threading.Thread(target=CalculateCarDataF, daemon=True)
+    GamepadsThread = threading.Thread(target=HandleGamepads,daemon = True)
     print(777)
     OutSimThread.start()
     UpdateControlChangesThread.start()
     GUIThread.start()
-
-    XInput.set_deadzone(XInput.DEADZONE_LEFT_THUMB, 0)
-    print_hi('PyCharm')
-    gamepad = vg.VX360Gamepad()
-    time.sleep(1)
+    GamepadsThread.start()
 
 
-    gamepad.register_notification(callback_function=my_callback)
-    print(XInput.get_connected())
-    print(str((XInput.get_state(0))))
-    state_0 = XInput.get_state(0)
-    #XInput.get_trigger_values(state_0)
+
+
+
+
+
     FFBtest = 0
     while True:
        # print(laststeervalue)
@@ -140,37 +97,9 @@ if __name__ == '__main__':
 
 
         #print("\r", CurrentSlipAngle, end="")
-        CalculateSlipAngle=0
-        if abs(InternalVars.CurrentSlipAngle) - Settings().AllowedSlip <0:
-            CalculateSlipAngle = 0
-        else:
-            CalculateSlipAngle = math.copysign(abs(InternalVars.CurrentSlipAngle)-Settings().AllowedSlip,InternalVars.CurrentSlipAngle)
 
-        CalcCorrectedSteering = Settings().CorrectionFactor * (-1*CalculateSlipAngle / Settings().LFSSteerAngle)
 
-        CorrectedSteering = float(CalcCorrectedSteering * (not bool(Settings.SteeringPassThrough)) + NonLinearSteerValue)
-       # print(CorrectedSteering)
-      #  print(NonLinearSteerValue)
 
-        if abs(CorrectedSteering) > 1:
-            CorrectedSteering = math.copysign(1,CorrectedSteering)
-
-        gamepad.left_joystick_float(x_value_float=CorrectedSteering, y_value_float=0.0) #setting virtual gamepad steer
-        gamepad.update()
-        BigFFB=0
-        SmallFFB = float(clamp(InternalVars.FFB / 127,0,1))
-        if SmallFFB >= 0.95:
-            BigFFB = SmallFFB
-        XInput.set_vibration(0,SmallFFB,0)
-        #print(CorrectedSteering," ",CurrentSlipAngle)
-        events = XInput.get_events()
-        for event in events:
-            if event.user_index == 0:
-                if event.type == XInput.EVENT_STICK_MOVED:
-                    if event.stick == XInput.LEFT:
-                        #print("\r",event.x , end = '')
-                        laststeervalue = float(event.x)
-                        NonLinearSteerValue = math.copysign(pow(abs(laststeervalue),Settings().NonLinearity),laststeervalue)
 
         time.sleep(0.001)
         if InternalVars.ClosingApp ==1:
