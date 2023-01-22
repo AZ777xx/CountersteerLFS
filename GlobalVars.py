@@ -13,6 +13,7 @@ class OutsimData():
 
 
 class Settings():
+    SteeringPassThrough = 1
     LFSSteerAngle = 24
     CorrectionFactor = 0.9
     AllowedSlip = 0

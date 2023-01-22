@@ -18,6 +18,8 @@ import socket
 import struct
 import threading
 import subprocess
+
+import GUI
 from GlobalVars import *
 
 
@@ -98,14 +100,15 @@ def UpdateControlChanges():
 
 if __name__ == '__main__':
 
-    global InternalVars
-    subprocess.run(["python", "GUI.py"])
-    time.sleep(1)
+    global InternalVar
+    GUIThread = threading.Thread(target=GUI.RunGUI)
     OutSimThread = threading.Thread(target=GetOutsimData)
     UpdateControlChangesThread = threading.Thread(target=UpdateControlChanges)
     print(777)
     OutSimThread.start()
     UpdateControlChangesThread.start()
+    GUIThread.start()
+
     laststeervalue = 0
     NonLinearSteerValue=0
     XInput.set_deadzone(XInput.DEADZONE_LEFT_THUMB, 0)
@@ -134,7 +137,7 @@ if __name__ == '__main__':
 
         CalcCorrectedSteering = Settings().CorrectionFactor * (-1*CalculateSlipAngle / Settings().LFSSteerAngle)
 
-        CorrectedSteering = CalcCorrectedSteering + NonLinearSteerValue
+        CorrectedSteering = CalcCorrectedSteering * Settings.SteeringPassThrough + NonLinearSteerValue
        # print(CorrectedSteering)
       #  print(NonLinearSteerValue)
 
