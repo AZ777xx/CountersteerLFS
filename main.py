@@ -10,6 +10,8 @@ OutSim Port 30000
 OutSim ID 0
 OutSim Opts 80
 """
+import sys
+
 import vgamepad as vg
 import XInput
 import time
@@ -18,6 +20,7 @@ import socket
 import struct
 import threading
 import subprocess
+import multiprocessing
 
 import GUI
 from GlobalVars import *
@@ -77,12 +80,22 @@ def GetOutsimData():
             OutsimData.wheelspeed3 = outsim_pack[44]
             OutsimData.touchingground0 = outsim_pack[9]
             OutsimData.touchingground1 = outsim_pack[22]
+            OutsimData.wheel3steer = outsim_pack[40]
+            OutsimData.wheel2steer = outsim_pack[27]
             #print("outsimdata", OutsimData.wheelspeed3)
 
 def UpdateControlChanges():
     global OutsimData
     global InternalVars
     while True:
+
+        tmpMeasureSteerAngle = abs(OutsimData.wheel3steer)
+        if tmpMeasureSteerAngle < abs(OutsimData.wheel2steer):
+            tmpMeasureSteerAngle= abs(OutsimData.wheel2steer)
+        if tmpMeasureSteerAngle> InternalVars.LFSMaxMeasuredSteeringAngle:
+            InternalVars.LFSMaxMeasuredSteeringAngle = tmpMeasureSteerAngle
+
+
         if (OutsimData().wheelspeed3 + OutsimData().wheelspeed2) / 2 > Settings().MinimumSpeedSteerCorrect:
             currentSlipAngleTMP = (OutsimData().wheel0slipangle * 57.2958 + OutsimData().wheel1slipangle * 57.2958) / 2
         else:
@@ -93,7 +106,7 @@ def UpdateControlChanges():
         else:
             if OutsimData().touchingground0 == 0 or OutsimData().touchingground1 == 0:
                 CurrentSlipAngleTMP = (OutsimData().wheel0slipangle * 57.2958 * OutsimData().touchingground0 + OutsimData().wheel1slipangle * 57.2958 * OutsimData().touchingground1)
-        print("updatecontrolchanges",OutsimData().wheelspeed3)
+        #print("updatecontrolchanges",OutsimData().wheelspeed3)
         InternalVars.CurrentSlipAngle = currentSlipAngleTMP
         time.sleep(0.01)
 
@@ -102,15 +115,13 @@ if __name__ == '__main__':
 
     global InternalVar
     GUIThread = threading.Thread(target=GUI.RunGUI)
-    OutSimThread = threading.Thread(target=GetOutsimData)
-    UpdateControlChangesThread = threading.Thread(target=UpdateControlChanges)
+    OutSimThread = threading.Thread(target=GetOutsimData, daemon=True)
+    UpdateControlChangesThread = threading.Thread(target=UpdateControlChanges, daemon=True)
     print(777)
     OutSimThread.start()
     UpdateControlChangesThread.start()
     GUIThread.start()
 
-    laststeervalue = 0
-    NonLinearSteerValue=0
     XInput.set_deadzone(XInput.DEADZONE_LEFT_THUMB, 0)
     print_hi('PyCharm')
     gamepad = vg.VX360Gamepad()
@@ -137,7 +148,7 @@ if __name__ == '__main__':
 
         CalcCorrectedSteering = Settings().CorrectionFactor * (-1*CalculateSlipAngle / Settings().LFSSteerAngle)
 
-        CorrectedSteering = CalcCorrectedSteering * Settings.SteeringPassThrough + NonLinearSteerValue
+        CorrectedSteering = float(CalcCorrectedSteering * (not bool(Settings.SteeringPassThrough)) + NonLinearSteerValue)
        # print(CorrectedSteering)
       #  print(NonLinearSteerValue)
 
@@ -162,6 +173,11 @@ if __name__ == '__main__':
                         NonLinearSteerValue = math.copysign(pow(abs(laststeervalue),Settings().NonLinearity),laststeervalue)
 
         time.sleep(0.001)
+        if InternalVars.ClosingApp ==1:
+
+            print("exit")
+            GUIThread.join()
+            sys.exit(1)
 
     input()
 
