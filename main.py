@@ -54,6 +54,8 @@ def GetOutsimData():
 if __name__ == '__main__':
     global InternalVar
     FileRoutines.readconfig()
+    FileRoutines.patchLFScfg()
+
     OutSimThread = threading.Thread(target=GetOutsimData, daemon=True)
     UpdateControlChangesThread = threading.Thread(target=CalculateCarDataF, daemon=True)
     GamepadsThread = threading.Thread(target=HandleGamepads,daemon = True)
@@ -64,7 +66,8 @@ if __name__ == '__main__':
 
     print(Settings.LFSSteerAngle, ' <<<<<<<<<<<<<<<<<')
     GUI.RunGUI()
-    FileRoutines.ConfigWrite()
+    FileRoutines.writeconfig()
+    FileRoutines.patchLFScfg()
     sys.exit(1)
 
     input()
