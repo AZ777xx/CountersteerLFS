@@ -11,7 +11,7 @@ import socket
 import struct
 import threading
 
-
+import FileRoutines
 import GUI
 from GlobalVars import *
 from CalculateCarData import CalculateCarDataF
@@ -53,6 +53,7 @@ def GetOutsimData():
 
 if __name__ == '__main__':
     global InternalVar
+    FileRoutines.readconfig()
     OutSimThread = threading.Thread(target=GetOutsimData, daemon=True)
     UpdateControlChangesThread = threading.Thread(target=CalculateCarDataF, daemon=True)
     GamepadsThread = threading.Thread(target=HandleGamepads,daemon = True)
@@ -61,8 +62,9 @@ if __name__ == '__main__':
     UpdateControlChangesThread.start()
     GamepadsThread.start()
 
-
+    print(Settings.LFSSteerAngle, ' <<<<<<<<<<<<<<<<<')
     GUI.RunGUI()
+    FileRoutines.ConfigWrite()
     sys.exit(1)
 
     input()

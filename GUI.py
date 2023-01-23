@@ -8,11 +8,13 @@ def RunGUI():
     def GUIReadVars(event=None):
         print(SteeringPassThrough.get())
         Settings.SteeringPassThrough=SteeringPassThrough.get()
+        Settings.LFSSteerAngle=LFSSteerAngle.get()
 
 
 
     def GUIWrite():
         LFSActualMaxAngleText.set("Measured Max Angle = " + str(round(InternalVars.LFSMaxMeasuredSteeringAngle * 57.2958,2)) + "            ")
+        LFSSteerAngle.set(Settings.LFSSteerAngle)
         if InternalVars.ClosingApp !=1:
             root.after(300, GUIWrite)
 
@@ -21,8 +23,7 @@ def RunGUI():
         InternalVars.LFSMaxMeasuredSteeringAngle=0
         GUIWrite()
 
-    def OnExit():
-        root.destroy()
+
 
     root = tk.Tk()
     root.geometry("300x800")
@@ -35,6 +36,7 @@ def RunGUI():
     label.pack()
 
     LFSSteerAngle = tk.IntVar()
+    LFSSteerAngle.set(Settings.LFSSteerAngle)
     LFSSteerAngleSlider = tk.Scale(root, from_= 1, to= 90, variable=LFSSteerAngle, command=GUIReadVars,orient="horizontal", length=300)
     LFSSteerAngleSlider.pack()
 

@@ -30,6 +30,7 @@ class InternalVars():
     ClosingApp = 0
     NonLinearSteerValue = 0
     CorrectedSteering=0
+    InternalConfigFileError = 0
 
 class GamePadData():
     RealGamepadSteer=0
