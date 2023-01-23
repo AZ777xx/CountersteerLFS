@@ -7,7 +7,7 @@ import time
 def RunGUI():
     def GUIReadVars(event=None):
         print(SteeringPassThrough.get())
-        Settings.SteeringPassThrough=SteeringPassThrough.get()
+        Settings.SteeringPassThrough=int(SteeringPassThrough.get())
         Settings.LFSSteerAngle=LFSSteerAngle.get()
         Settings.CorrectionFactor=CorrectionFactor.get()
         Settings.AllowedSlip=AllowedSlip.get()
@@ -32,7 +32,8 @@ def RunGUI():
     root = tk.Tk()
     root.geometry("300x800")
 
-    SteeringPassThrough = tk.IntVar()
+    SteeringPassThrough = tk.BooleanVar()
+    SteeringPassThrough.set(bool(Settings.SteeringPassThrough))
     SteeringPassthroughCheckbox = tk.Checkbutton(root, text="Steering Passthrough", variable=SteeringPassThrough,command=GUIReadVars, justify=tk.LEFT)
     SteeringPassthroughCheckbox.pack()
 
