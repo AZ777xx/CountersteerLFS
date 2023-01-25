@@ -43,4 +43,4 @@ def CalculateCarDataF():
             CalcCorrectedSteering = math.copysign(1, CalcCorrectedSteering)
 
         InternalVars.CorrectedSteering = CalcCorrectedSteering
-        time.sleep(0.01)
+        time.sleep(0.0001)
