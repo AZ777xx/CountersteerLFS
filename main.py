@@ -43,13 +43,19 @@ def GetOutsimData():
             OutsimData.wheel1slipangle = outsim_pack[25]
             OutsimData.wheel2slipangle = outsim_pack[38]
             OutsimData.wheel3slipangle = outsim_pack[51]
+            OutsimData.wheelspeed1 = outsim_pack[18]
+            OutsimData.wheelspeed0 = outsim_pack[5]
             OutsimData.wheelspeed2 = outsim_pack[31]
             OutsimData.wheelspeed3 = outsim_pack[44]
             OutsimData.touchingground0 = outsim_pack[9]
             OutsimData.touchingground1 = outsim_pack[22]
             OutsimData.wheel3steer = outsim_pack[40]
             OutsimData.wheel2steer = outsim_pack[27]
-            #print("outsimdata", OutsimData.wheelspeed3)
+            OutsimData.SlipFraction0 = outsim_pack[8]
+            OutsimData.SlipFraction1 = outsim_pack[21]
+            OutsimData.SlipFraction2 = outsim_pack[34]
+            OutsimData.SlipFraction3 = outsim_pack[47]
+            #print("outsimdata", abs(outsim_pack[34]),outsim_pack[47])
 
 if __name__ == '__main__':
     global InternalVar

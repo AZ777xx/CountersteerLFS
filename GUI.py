@@ -14,6 +14,24 @@ def RunGUI():
         Settings.Steering.ActualSteerAngle = ActualSteeringAngle.get()
         Settings.Steering.NonLinearity = NonLinearity.get()
 
+        Settings.Throttle.EnableTC = int(EnableTC.get())
+        Settings.Throttle.TCEngageSpeed = TCEngageSpeed.get()
+        Settings.Throttle.TCThreshhold = TCThreshhold.get()
+        if TCMax.get() > Settings.Throttle.TCThreshhold:
+            Settings.Throttle.TCMax = TCMax.get()
+        else:
+            Settings.Throttle.TCMax = Settings.Throttle.TCThreshhold
+            TCMax.set(Settings.Throttle.TCThreshhold)
+
+        Settings.Brakes.EnableBrakeHelp = int(EnableBrakeHelp.get())
+        Settings.Brakes.BrakeHelpEngageSpeed = BrakeHelpEngageSpeed.get()
+        Settings.Brakes.BrakeHelpThreshhold = BrakeHelpThreshhold.get()
+        if BrakeHelpMax.get() > Settings.Brakes.BrakeHelpThreshhold:
+            Settings.Brakes.BrakeHelpMax = BrakeHelpMax.get()
+        else:
+            Settings.Brakes.BrakeHelpMax = Settings.Brakes.BrakeHelpThreshhold
+            BrakeHelpMax.set(Settings.Brakes.BrakeHelpThreshhold)
+
 
 
     def GUIWrite():
@@ -97,6 +115,95 @@ def RunGUI():
     steering_options_frame.configure(width=300)
     steering_options_frame.pack()
     steering_options_frame.place(x=0, y=0)
+
+    ThrottleOptionsFrame = tk.Frame(root)
+
+    label = tk.Label(ThrottleOptionsFrame, text="Throttle Help:")
+    label.pack()
+
+    EnableTC = tk.BooleanVar()
+    EnableTC.set(bool(Settings.Throttle.EnableTC))
+    EnableTCCheckbox = tk.Checkbutton(ThrottleOptionsFrame, text="Enable TC",
+                                                 variable=EnableTC, command=GUIReadVars)
+    EnableTCCheckbox.pack()
+
+    label = tk.Label(ThrottleOptionsFrame, text="\nTC Engage Speed (wheel rotation rad/s):")
+    label.pack()
+
+    TCEngageSpeed = tk.DoubleVar()
+    TCEngageSpeed.set(Settings.Throttle.TCEngageSpeed)
+    TCEngageSpeedSlider = tk.Scale(ThrottleOptionsFrame, from_=0, to=50, resolution=1, variable=TCEngageSpeed,
+                                  command=GUIReadVars,
+                                  orient="horizontal", length=300)
+    TCEngageSpeedSlider.pack()
+
+    label = tk.Label(ThrottleOptionsFrame, text="\nTC Threshhold (wheel rotation rad/s):")
+    label.pack()
+
+    TCThreshhold = tk.DoubleVar()
+    TCThreshhold.set(Settings.Throttle.TCThreshhold)
+    TCThreshholdSlider = tk.Scale(ThrottleOptionsFrame, from_=0, to=50, resolution=1, variable=TCThreshhold,
+                                   command=GUIReadVars,
+                                   orient="horizontal", length=300)
+    TCThreshholdSlider.pack()
+
+    label = tk.Label(ThrottleOptionsFrame, text="\nTC Maximum wheelspeed difference (wheel rotation rad/s):")
+    label.pack()
+
+    TCMax = tk.DoubleVar()
+    TCMax.set(Settings.Throttle.TCMax)
+    TCMaxSlider = tk.Scale(ThrottleOptionsFrame, from_=0, to=50, resolution=1, variable=TCMax,
+                                  command=GUIReadVars,
+                                  orient="horizontal", length=300)
+    TCMaxSlider.pack()
+
+    ThrottleOptionsFrame.pack()
+    ThrottleOptionsFrame.place(x=302, y=0)
+
+    BrakeOptionsFrame = tk.Frame(root)
+
+    label = tk.Label(BrakeOptionsFrame, text="Brake Help:")
+    label.pack()
+
+    EnableBrakeHelp = tk.BooleanVar()
+    EnableBrakeHelp.set(bool(Settings.Brakes.EnableBrakeHelp))
+    EnableBrakeHelpCheckbox = tk.Checkbutton(BrakeOptionsFrame, text="Enable Brake Help",
+                                      variable=EnableBrakeHelp, command=GUIReadVars)
+    EnableBrakeHelpCheckbox.pack()
+
+    label = tk.Label(BrakeOptionsFrame, text="\nBrake Help Engage Speed (wheel rotation rad/s):")
+    label.pack()
+
+    BrakeHelpEngageSpeed = tk.DoubleVar()
+    BrakeHelpEngageSpeed.set(Settings.Brakes.BrakeHelpEngageSpeed)
+    BrakeHelpEngageSpeedSlider = tk.Scale(BrakeOptionsFrame, from_=0, to=50, resolution=1, variable=BrakeHelpEngageSpeed,
+                                   command=GUIReadVars,
+                                   orient="horizontal", length=300)
+    BrakeHelpEngageSpeedSlider.pack()
+
+    label = tk.Label(BrakeOptionsFrame, text="\nBrake Help Threshhold (wheel rotation rad/s):")
+    label.pack()
+
+    BrakeHelpThreshhold = tk.DoubleVar()
+    BrakeHelpThreshhold.set(Settings.Brakes.BrakeHelpThreshhold)
+    BrakeHelpThreshholdSlider = tk.Scale(BrakeOptionsFrame, from_=0, to=50, resolution=1, variable=BrakeHelpThreshhold,
+                                  command=GUIReadVars,
+                                  orient="horizontal", length=300)
+    BrakeHelpThreshholdSlider.pack()
+
+    label = tk.Label(BrakeOptionsFrame, text="\nBrake Help max wheelspeed difference (wheel rot rad/s):")
+    label.pack()
+
+    BrakeHelpMax = tk.DoubleVar()
+    BrakeHelpMax.set(Settings.Brakes.BrakeHelpMax)
+    BrakeHelpMaxSlider = tk.Scale(BrakeOptionsFrame, from_=0, to=50, resolution=1, variable=BrakeHelpMax,
+                           command=GUIReadVars,
+                           orient="horizontal", length=300)
+    BrakeHelpMaxSlider.pack()
+
+    BrakeOptionsFrame.pack()
+    BrakeOptionsFrame.place(x=604,y=0)
+
 
     root.resizable(False,False)
     root.after(300, GUIWrite)

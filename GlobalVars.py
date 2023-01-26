@@ -12,7 +12,10 @@ class OutsimData():
     wheel3slipangle = 0
     wheel3steer = 0
     wheel2steer = 0
-
+    SlipFraction0=0
+    SlipFraction1=0
+    SlipFraction2=0
+    SlipFraction3=0
 
 class Settings():
     class Main():
@@ -26,7 +29,16 @@ class Settings():
         AllowedSlip = 0
         NonLinearity = 1.8
         MinimumSpeedSteerCorrect = 5
-
+    class Throttle:
+        EnableTC = 0
+        TCEngageSpeed = 15
+        TCThreshhold = 5
+        TCMax = 20
+    class Brakes:
+        EnableBrakeHelp = 0
+        BrakeHelpEngageSpeed = 15
+        BrakeHelpThreshhold=5
+        BrakeHelpMax=35
 
 
 class InternalVars():
@@ -37,6 +49,10 @@ class InternalVars():
     NonLinearSteerValue = 0
     CorrectedSteering=0
     InternalConfigFileError = 0
+    RealThrottle = 0
+    RealBrake = 0
+    CorrectedThrottle = 0
+    CorrectedBrake = 0
 
 class GamePadData():
     RealGamepadSteer=0

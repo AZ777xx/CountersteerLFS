@@ -1,4 +1,6 @@
 import math
+
+import GlobalVars
 from GlobalVars import *
 import time
 def CalculateCarDataF():
@@ -43,4 +45,48 @@ def CalculateCarDataF():
             CalcCorrectedSteering = math.copysign(1, CalcCorrectedSteering)
 
         InternalVars.CorrectedSteering = CalcCorrectedSteering
+
+        if bool(Settings.Throttle.EnableTC) == True:
+            TMP_CorrectedThrottle = GlobalVars.InternalVars.RealThrottle
+            MeanWheelSpeed = (OutsimData.wheelspeed0 +OutsimData.wheelspeed1 +OutsimData.wheelspeed2 +OutsimData.wheelspeed3 )/4
+            if MeanWheelSpeed > Settings.Throttle.TCEngageSpeed:
+                WheelSpeedArray = [OutsimData.wheelspeed0, OutsimData.wheelspeed1, OutsimData.wheelspeed2, OutsimData.wheelspeed3]
+                WheelSpeedArraySorted = sorted(WheelSpeedArray)
+                WheelSpeedDifference = abs(WheelSpeedArraySorted[0]-WheelSpeedArraySorted[3])
+                #print(WheelSpeedDifference)
+                if WheelSpeedDifference > Settings.Throttle.TCThreshhold:
+                    ThrottleReduceFactor = 1-( (WheelSpeedDifference- Settings.Throttle.TCThreshhold) / Settings.Throttle.TCMax)
+                    if ThrottleReduceFactor >1:
+                        ThrottleReduceFactor = 1
+                    if ThrottleReduceFactor <0:
+                        ThrottleReduceFactor=0
+                    TMP_CorrectedThrottle = InternalVars.RealThrottle * ThrottleReduceFactor
+            GlobalVars.InternalVars.CorrectedThrottle = TMP_CorrectedThrottle
+        else:
+            GlobalVars.InternalVars.CorrectedThrottle = GlobalVars.InternalVars.RealThrottle
+
+           # print (TMP_CorrectedThrottle)
+        if bool(Settings.Brakes.EnableBrakeHelp) == True:
+            TMP_CorrectedBrake = GlobalVars.InternalVars.RealBrake
+            MeanWheelSpeed = (OutsimData.wheelspeed0 + OutsimData.wheelspeed1 + OutsimData.wheelspeed2 + OutsimData.wheelspeed3) / 4
+            if MeanWheelSpeed > Settings.Brakes.BrakeHelpEngageSpeed:
+                WheelSpeedArray = [OutsimData.wheelspeed0, OutsimData.wheelspeed1, OutsimData.wheelspeed2,
+                                   OutsimData.wheelspeed3]
+                WheelSpeedArraySorted = sorted(WheelSpeedArray)
+                WheelSpeedDifference = abs(WheelSpeedArraySorted[0] - WheelSpeedArraySorted[3])
+                #print(WheelSpeedDifference)
+                if WheelSpeedDifference > Settings.Brakes.BrakeHelpThreshhold:
+                    BrakeReduceFactor = 1 - (
+                                (WheelSpeedDifference - Settings.Brakes.BrakeHelpThreshhold) / Settings.Brakes.BrakeHelpMax)
+                    if BrakeReduceFactor > 1:
+                        BrakeReduceFactor = 1
+                    if BrakeReduceFactor < 0:
+                        BrakeReduceFactor = 0
+                    TMP_CorrectedBrake = InternalVars.RealBrake * BrakeReduceFactor
+            GlobalVars.InternalVars.CorrectedBrake = TMP_CorrectedBrake
+
+
+        else:
+            GlobalVars.InternalVars.CorrectedBrake = GlobalVars.InternalVars.RealBrake
+
         time.sleep(0.0001)

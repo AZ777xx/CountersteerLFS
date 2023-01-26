@@ -27,6 +27,8 @@ def my_callback(client, target, large_motor, small_motor, led_number, user_data)
 
 def HandleGamepads():
     XInput.set_deadzone(XInput.DEADZONE_LEFT_THUMB, 0)
+    XInput.set_deadzone(XInput.DEADZONE_RIGHT_THUMB, 0)
+    XInput.set_deadzone(XInput.DEADZONE_TRIGGER, 0)
     gamepad = vg.VX360Gamepad()
 
     gamepad.register_notification(callback_function=my_callback)
@@ -34,7 +36,9 @@ def HandleGamepads():
     print(str((XInput.get_state(0))))
     state_0 = XInput.get_state(0)
     while True:
-        gamepad.left_joystick_float(x_value_float=InternalVars.CorrectedSteering, y_value_float=0.0) #setting virtual gamepad steer
+        gamepad.left_joystick_float(x_value_float=InternalVars.CorrectedSteering, y_value_float=InternalVars.CorrectedThrottle) #setting virtual gamepad steer
+        gamepad.right_joystick_float(x_value_float=0,
+                                    y_value_float=InternalVars.CorrectedBrake)
         gamepad.update()
 
         SmallFFB = float(clamp(InternalVars.FFB / 127, 0, 1))
@@ -50,4 +54,9 @@ def HandleGamepads():
                         laststeervalue = float(event.x)
                         InternalVars.NonLinearSteerValue = math.copysign(
                             pow(abs(laststeervalue), Settings().Steering.NonLinearity), laststeervalue)
+                if event.type == XInput.EVENT_TRIGGER_MOVED:
+                    if event.trigger == XInput.RIGHT:
+                        InternalVars.RealThrottle = float(event.value)
+                    if event.trigger == XInput.LEFT:
+                        InternalVars.RealBrake = float(event.value)
         time.sleep(0.0001)
