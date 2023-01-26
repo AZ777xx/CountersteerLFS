@@ -64,7 +64,7 @@ if __name__ == '__main__':
     UpdateControlChangesThread.start()
     GamepadsThread.start()
 
-    print(Settings.LFSSteerAngle, ' <<<<<<<<<<<<<<<<<')
+    print(Settings.Steering.LFSSteerAngle)
     GUI.RunGUI()
     FileRoutines.writeconfig()
     FileRoutines.patchLFScfg()

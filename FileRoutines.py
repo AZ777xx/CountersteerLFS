@@ -21,10 +21,20 @@ class CaseSensitiveConfigParser(ConfigParser):
     def optionxform(self, optionstr):
         return optionstr
 
+
+
 def readconfig():
 
-    default_config = {'Settings': dict(filter(lambda item: not item[0].startswith("__"), vars(Settings).items()))}
-   # print(default_config)
+    default_config = {}
+    for class_name, class_obj in vars(Settings).items():
+        if not class_name.startswith("__"):
+            default_config[class_name] = {}
+            # Iterate through the variables in each nested class
+            for variable_name, variable_value in vars(class_obj).items():
+                if not variable_name.startswith("__"):
+                    default_config[class_name][variable_name] = variable_value
+
+    print(default_config)
 
     config = CaseSensitiveConfigParser()
 
@@ -45,13 +55,14 @@ def readconfig():
     config.write(config_string)
     config_str = config_string.getvalue()
     print(config_str)
-    options = config.items('Settings')
-    for option, value in options:
-        #setattr(GlobalVars, 'Settings', type('Settings', (GlobalVars.Settings,), {option: value}))
-        try:
-            setattr(GlobalVars.Settings, option, float(value))
-        except:
-            setattr(GlobalVars.Settings, option, value)
+    #options = config.items('Settings')
+    for section in config.sections():
+        for option, value in config.items(section):
+            if section in vars(Settings):
+                try:
+                    setattr(vars(Settings)[section], option, float(value))
+                except ValueError:
+                    setattr(vars(Settings)[section], option, value)
 
         #GlobalVars.Settings.__dict__[option]=value
         #GlobalVars.Settings.LFSSteerAngle = 77
@@ -61,7 +72,14 @@ def writeconfig():
     #global config
     config_file = 'FFBcountersteer.cfg'
     config = CaseSensitiveConfigParser()
-    default_config = {'Settings': {name: getattr(Settings, name) for name in dir(Settings) if not name.startswith('__') and not inspect.ismethod(getattr(Settings, name))}}
+    default_config = {}
+    for class_name, class_obj in vars(Settings).items():
+        if not class_name.startswith("__"):
+            default_config[class_name] = {}
+            # Iterate through the variables in each nested class
+            for variable_name, variable_value in vars(class_obj).items():
+                if not variable_name.startswith("__"):
+                    default_config[class_name][variable_name] = variable_value
     #print(dir(Settings))
    # print("222",default_config)
     for section, options in default_config.items():
@@ -83,7 +101,7 @@ def patchLFScfg():
 
 
    try:
-        with open(Settings.LFS_cfg_location, "r") as file:
+        with open(Settings.Main.LFS_cfg_location, "r") as file:
             # Read the contents of the file into memory and split by lines
             lines = file.read().split("\n")
 
@@ -97,7 +115,7 @@ def patchLFScfg():
         contents = "\n".join(lines)
 
         # Open the file for writing
-        with open(Settings.LFS_cfg_location, "w") as file:
+        with open(Settings.Main.LFS_cfg_location, "w") as file:
             # Write the new contents to the file
             file.write(contents)
    except Exception:

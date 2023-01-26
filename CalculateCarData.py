@@ -13,7 +13,7 @@ def CalculateCarDataF():
 
         """MEASURE REAR SLIP ANGLES"""
         currentSlipAngleTMP = 0
-        if (OutsimData().wheelspeed3 + OutsimData().wheelspeed2) / 2 > Settings().MinimumSpeedSteerCorrect:
+        if (OutsimData().wheelspeed3 + OutsimData().wheelspeed2) / 2 > Settings().Steering.MinimumSpeedSteerCorrect:
             currentSlipAngleTMP = (OutsimData().wheel0slipangle * 57.2958 + OutsimData().wheel1slipangle * 57.2958) / 2
         else:
             currentSlipAngleTMP = 0
@@ -26,18 +26,18 @@ def CalculateCarDataF():
                             OutsimData().wheel0slipangle * 57.2958 * OutsimData().touchingground0 + OutsimData().wheel1slipangle * 57.2958 * OutsimData().touchingground1)
 
         """Decrease SLIP ANGLE PER SETTINGS"""
-        if abs(currentSlipAngleTMP) - Settings().AllowedSlip < 0:
+        if abs(currentSlipAngleTMP) - Settings().Steering.AllowedSlip < 0:
             currentSlipAngleTMP = 0
         else:
-            currentSlipAngleTMP = math.copysign(abs(currentSlipAngleTMP) - Settings().AllowedSlip,currentSlipAngleTMP)
+            currentSlipAngleTMP = math.copysign(abs(currentSlipAngleTMP) - Settings().Steering.AllowedSlip,currentSlipAngleTMP)
 
         InternalVars.CurrentSlipAngle=currentSlipAngleTMP
 
         """CALCULATE OUTPUT STEERING"""
-        CalcCorrectedSteering = Settings().CorrectionFactor * (-1 * currentSlipAngleTMP / Settings().LFSSteerAngle)
+        CalcCorrectedSteering = Settings().Steering.CorrectionFactor * (-1 * currentSlipAngleTMP / Settings().Steering.LFSSteerAngle)
 
         CalcCorrectedSteering = float(
-            CalcCorrectedSteering * (not bool(Settings.SteeringPassThrough)) + InternalVars.NonLinearSteerValue * (Settings.ActualSteerAngle/Settings.LFSSteerAngle))* (not bool(Settings.SteeringPassThrough)) + InternalVars.NonLinearSteerValue * bool(Settings.SteeringPassThrough)
+            CalcCorrectedSteering * (not bool(Settings.Steering.SteeringPassThrough)) + InternalVars.NonLinearSteerValue * (Settings.Steering.ActualSteerAngle/Settings.Steering.LFSSteerAngle))* (not bool(Settings.Steering.SteeringPassThrough)) + InternalVars.NonLinearSteerValue * bool(Settings.Steering.SteeringPassThrough)
 
         if abs(CalcCorrectedSteering) > 1:
             CalcCorrectedSteering = math.copysign(1, CalcCorrectedSteering)

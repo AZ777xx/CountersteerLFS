@@ -49,5 +49,5 @@ def HandleGamepads():
                         # print("\r",event.x , end = '')
                         laststeervalue = float(event.x)
                         InternalVars.NonLinearSteerValue = math.copysign(
-                            pow(abs(laststeervalue), Settings().NonLinearity), laststeervalue)
+                            pow(abs(laststeervalue), Settings().Steering.NonLinearity), laststeervalue)
         time.sleep(0.0001)

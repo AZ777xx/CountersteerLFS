@@ -15,15 +15,17 @@ class OutsimData():
 
 
 class Settings():
-    SteeringPassThrough = 0
-    LFSSteerAngle = 24
-    ActualSteerAngle= 20
-    CorrectionFactor = 0.9
-    AllowedSlip = 0
-    NonLinearity = 1.8
-    MinimumSpeedSteerCorrect = 5
-    Patch_LFS_cfg = 1
-    LFS_cfg_location = "D:\LFS\cfg.txt"
+    class Main():
+        Patch_LFS_cfg = 1
+        LFS_cfg_location = "D:\LFS\cfg.txt"
+    class Steering:
+        SteeringPassThrough = 0
+        LFSSteerAngle = 24
+        ActualSteerAngle = 20
+        CorrectionFactor = 0.9
+        AllowedSlip = 0
+        NonLinearity = 1.8
+        MinimumSpeedSteerCorrect = 5
 
 
 

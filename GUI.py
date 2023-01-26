@@ -7,18 +7,18 @@ import time
 def RunGUI():
     def GUIReadVars(event=None):
         print(SteeringPassThrough.get())
-        Settings.SteeringPassThrough=int(SteeringPassThrough.get())
-        Settings.LFSSteerAngle=LFSSteerAngle.get()
-        Settings.CorrectionFactor=CorrectionFactor.get()
-        Settings.AllowedSlip=AllowedSlip.get()
-        Settings.ActualSteerAngle = ActualSteeringAngle.get()
-        Settings.NonLinearity = NonLinearity.get()
+        Settings.Steering.SteeringPassThrough=int(SteeringPassThrough.get())
+        Settings.Steering.LFSSteerAngle=LFSSteerAngle.get()
+        Settings.Steering.CorrectionFactor=CorrectionFactor.get()
+        Settings.Steering.AllowedSlip=AllowedSlip.get()
+        Settings.Steering.ActualSteerAngle = ActualSteeringAngle.get()
+        Settings.Steering.NonLinearity = NonLinearity.get()
 
 
 
     def GUIWrite():
         LFSActualMaxAngleText.set("Measured Max Angle = " + str(round(InternalVars.LFSMaxMeasuredSteeringAngle * 57.2958,2)) + "            ")
-        LFSSteerAngle.set(Settings.LFSSteerAngle)
+        LFSSteerAngle.set(Settings.Steering.LFSSteerAngle)
         if InternalVars.ClosingApp !=1:
             root.after(300, GUIWrite)
 
@@ -37,7 +37,7 @@ def RunGUI():
     steering_options_frame =tk.Frame(root)
 
     SteeringPassThrough = tk.BooleanVar()
-    SteeringPassThrough.set(bool(Settings.SteeringPassThrough))
+    SteeringPassThrough.set(bool(Settings.Steering.SteeringPassThrough))
     SteeringPassthroughCheckbox = tk.Checkbutton(steering_options_frame, text="Steering Passthrough", variable=SteeringPassThrough,command=GUIReadVars, justify=tk.LEFT)
     SteeringPassthroughCheckbox.pack()
 
@@ -45,7 +45,7 @@ def RunGUI():
     label.pack()
 
     LFSSteerAngle = tk.IntVar()
-    LFSSteerAngle.set(Settings.LFSSteerAngle)
+    LFSSteerAngle.set(Settings.Steering.LFSSteerAngle)
     LFSSteerAngleSlider = tk.Scale(steering_options_frame, from_= 1, to= 90, variable=LFSSteerAngle, command=GUIReadVars,orient="horizontal", length=300)
     LFSSteerAngleSlider.pack()
 
@@ -61,7 +61,7 @@ def RunGUI():
     label.pack()
 
     ActualSteeringAngle = tk.IntVar()
-    ActualSteeringAngle.set(Settings.ActualSteerAngle)
+    ActualSteeringAngle.set(Settings.Steering.ActualSteerAngle)
     ActualSteeringAngleSlider = tk.Scale(steering_options_frame, from_=1, to=90, variable=ActualSteeringAngle,
                                       command=GUIReadVars,
                                       orient="horizontal", length=300)
@@ -71,7 +71,7 @@ def RunGUI():
     label.pack()
 
     NonLinearity = tk.DoubleVar()
-    NonLinearity.set(Settings.NonLinearity)
+    NonLinearity.set(Settings.Steering.NonLinearity)
     NonLinearitySlider = tk.Scale(steering_options_frame, from_=0, to=3,resolution=0.05, variable=NonLinearity,
                                          command=GUIReadVars,
                                          orient="horizontal", length=300)
@@ -81,7 +81,7 @@ def RunGUI():
     label = tk.Label(steering_options_frame, text="\n CorrectionFactor:")
     label.pack()
     CorrectionFactor = tk.DoubleVar()
-    CorrectionFactor.set(Settings.CorrectionFactor)
+    CorrectionFactor.set(Settings.Steering.CorrectionFactor)
     CorrectionFactorSlider = tk.Scale(steering_options_frame, from_=0.1, to=2, variable=CorrectionFactor,resolution=0.05, command=GUIReadVars,
                                    orient="horizontal", length=300)
     CorrectionFactorSlider.pack()
@@ -90,7 +90,7 @@ def RunGUI():
     label.pack()
 
     AllowedSlip = tk.DoubleVar()
-    AllowedSlip.set(Settings.AllowedSlip)
+    AllowedSlip.set(Settings.Steering.AllowedSlip)
     AllowedSlipSlider = tk.Scale(steering_options_frame, from_=0, to=20, variable=AllowedSlip,resolution=0.1, command=GUIReadVars,
                                    orient="horizontal", length=300)
     AllowedSlipSlider.pack()
