@@ -21,7 +21,10 @@ from GamePads import HandleGamepads
 def weird_division(n, d):
     return n / d if d else 0
 
+maxSlipFactor = 0
+
 def GetOutsimData():
+    global maxSlipFactor
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(('127.0.0.1', 30000))
     sock.settimeout(0.2)
@@ -43,6 +46,10 @@ def GetOutsimData():
             OutsimData.wheel1slipangle = outsim_pack[25]
             OutsimData.wheel2slipangle = outsim_pack[38]
             OutsimData.wheel3slipangle = outsim_pack[51]
+            OutsimData.SlipRatio0 = outsim_pack[11]
+            OutsimData.SlipRatio1 = outsim_pack[24]
+            OutsimData.SlipRatio2 = outsim_pack[37]
+            OutsimData.SlipRatio3 = outsim_pack[50]
             OutsimData.wheelspeed1 = outsim_pack[18]
             OutsimData.wheelspeed0 = outsim_pack[5]
             OutsimData.wheelspeed2 = outsim_pack[31]
@@ -55,7 +62,8 @@ def GetOutsimData():
             OutsimData.SlipFraction1 = outsim_pack[21]
             OutsimData.SlipFraction2 = outsim_pack[34]
             OutsimData.SlipFraction3 = outsim_pack[47]
-            #print("outsimdata", abs(outsim_pack[34]),outsim_pack[47])
+
+            #print("outsimdata", OutsimData.SlipRatio0,OutsimData.SlipRatio1)
 
 if __name__ == '__main__':
     global InternalVar

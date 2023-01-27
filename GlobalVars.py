@@ -16,6 +16,10 @@ class OutsimData():
     SlipFraction1=0
     SlipFraction2=0
     SlipFraction3=0
+    SlipRatio0 = 0
+    SlipRatio1 = 0
+    SlipRatio2 = 0
+    SlipRatio3 = 0
 
 class Settings():
     class Main():
@@ -33,12 +37,12 @@ class Settings():
         EnableTC = 0
         TCEngageSpeed = 15
         TCThreshhold = 5
-        TCMax = 20
+        TCMultiplier = 20
     class Brakes:
         EnableBrakeHelp = 0
         BrakeHelpEngageSpeed = 15
         BrakeHelpThreshhold=5
-        BrakeHelpMax=35
+        BrakeHelpMultiplier=35
 
 
 class InternalVars():
