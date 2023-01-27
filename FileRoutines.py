@@ -106,7 +106,7 @@ def patchLFScfg():
             lines = file.read().split("\n")
 
         findreplaceline("OutSim Mode",2,lines)
-        findreplaceline("OutSim Delay", 1, lines)
+        findreplaceline("OutSim Delay", 0, lines)
         findreplaceline("OutSim IP", "127.0.0.1", lines)
         findreplaceline("OutSim Port", 30000, lines)
         findreplaceline("OutSim ID", 0, lines)

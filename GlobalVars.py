@@ -1,3 +1,5 @@
+from collections import deque
+
 class OutsimData():
     CurrentSlipAngle = 0
     wheelspeed2 = 0
@@ -38,11 +40,13 @@ class Settings():
         TCEngageSpeed = 15
         TCThreshhold = 5
         TCMultiplier = 20
+        Smoothing = 0.01
     class Brakes:
         EnableBrakeHelp = 0
         BrakeHelpEngageSpeed = 15
         BrakeHelpThreshhold=5
         BrakeHelpMultiplier=35
+        Smoothing = 0.01
 
 
 class InternalVars():
@@ -57,6 +61,8 @@ class InternalVars():
     RealBrake = 0
     CorrectedThrottle = 0
     CorrectedBrake = 0
+    timestamped_CorrectedThrottle = deque(maxlen=2500)
+    timestamped_CorrectedBrakes = deque(maxlen=2500)
 
 class GamePadData():
     RealGamepadSteer=0

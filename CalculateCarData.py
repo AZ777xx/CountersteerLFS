@@ -1,8 +1,18 @@
 import math
-
+import threading
 import GlobalVars
 from GlobalVars import *
 import time
+import statistics
+from collections import deque
+
+def mean_of_last_time(values: deque,seconds):
+    current_time = time.time()
+    while values and current_time - values[0][1] > seconds:
+        values.popleft()
+    last_second_values = [x[0] for x in values]
+    return sum(last_second_values)/len(last_second_values) if last_second_values else 0
+
 def CalculateCarDataF():
     global OutsimData
     global InternalVars
@@ -70,7 +80,10 @@ def CalculateCarDataF():
                 ThrottleReduceFactor = 1
             if ThrottleReduceFactor <0:
                 ThrottleReduceFactor=0
-            TMP_CorrectedThrottle = InternalVars.RealThrottle * ThrottleReduceFactor
+
+            InternalVars.timestamped_CorrectedThrottle.append((ThrottleReduceFactor,time.time()))
+            MeanThrottleReduceFactor = mean_of_last_time(InternalVars.timestamped_CorrectedThrottle , Settings.Throttle.Smoothing)
+            TMP_CorrectedThrottle = InternalVars.RealThrottle * MeanThrottleReduceFactor
             GlobalVars.InternalVars.CorrectedThrottle = TMP_CorrectedThrottle
         else:
             GlobalVars.InternalVars.CorrectedThrottle = GlobalVars.InternalVars.RealThrottle
@@ -98,7 +111,10 @@ def CalculateCarDataF():
                 BrakeReduceFactor = 1
             if BrakeReduceFactor < 0:
                 BrakeReduceFactor = 0
-            TMP_CorrectedBrake = InternalVars.RealBrake * BrakeReduceFactor
+            InternalVars.timestamped_CorrectedBrakes.append((BrakeReduceFactor, time.time()))
+            MeanBrakeReduceFactor = mean_of_last_time(InternalVars.timestamped_CorrectedBrakes,
+                                                         Settings.Brakes.Smoothing)
+            TMP_CorrectedBrake= InternalVars.RealBrake * MeanBrakeReduceFactor
             GlobalVars.InternalVars.CorrectedBrake = TMP_CorrectedBrake
 
 

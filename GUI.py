@@ -18,12 +18,14 @@ def RunGUI():
         Settings.Throttle.TCEngageSpeed = TCEngageSpeed.get()
         Settings.Throttle.TCThreshhold = TCThreshhold.get()
         Settings.Throttle.TCMultiplier = TCMultiplier.get()
+        Settings.Throttle.Smoothing = TCSmoothing.get()
 
 
         Settings.Brakes.EnableBrakeHelp = int(EnableBrakeHelp.get())
         Settings.Brakes.BrakeHelpEngageSpeed = BrakeHelpEngageSpeed.get()
         Settings.Brakes.BrakeHelpThreshhold = BrakeHelpThreshhold.get()
         Settings.Brakes.BrakeHelpMultiplier = BrakeHelpMultiplier.get()
+        Settings.Brakes.Smoothing = BrakeSmoothing.get()
 
 
 
@@ -125,7 +127,7 @@ def RunGUI():
 
     TCEngageSpeed = tk.DoubleVar()
     TCEngageSpeed.set(Settings.Throttle.TCEngageSpeed)
-    TCEngageSpeedSlider = tk.Scale(ThrottleOptionsFrame, from_=0, to=50, resolution=1, variable=TCEngageSpeed,
+    TCEngageSpeedSlider = tk.Scale(ThrottleOptionsFrame, from_=0, to=150, resolution=1, variable=TCEngageSpeed,
                                   command=GUIReadVars,
                                   orient="horizontal", length=300)
     TCEngageSpeedSlider.pack()
@@ -149,6 +151,16 @@ def RunGUI():
                                   command=GUIReadVars,
                                   orient="horizontal", length=300)
     TCMultiplierSlider.pack()
+
+    label = tk.Label(ThrottleOptionsFrame, text="\nTC Smoothing:")
+    label.pack()
+
+    TCSmoothing = tk.DoubleVar()
+    TCSmoothing.set(Settings.Throttle.Smoothing)
+    TCSmoothingSlider = tk.Scale(ThrottleOptionsFrame, from_=0, to=0.5, resolution=0.01, variable=TCSmoothing,
+                                  command=GUIReadVars,
+                                  orient="horizontal", length=300)
+    TCSmoothingSlider.pack()
 
     ThrottleOptionsFrame.pack()
     ThrottleOptionsFrame.place(x=302, y=0)
@@ -193,6 +205,17 @@ def RunGUI():
                            command=GUIReadVars,
                            orient="horizontal", length=300)
     BrakeHelpBrakeHelpMultiplierSlider.pack()
+
+
+    label = tk.Label(BrakeOptionsFrame, text="\nBrakes Smoothing:")
+    label.pack()
+
+    BrakeSmoothing = tk.DoubleVar()
+    BrakeSmoothing.set(Settings.Brakes.Smoothing)
+    BrakeSmoothingSlider = tk.Scale(BrakeOptionsFrame, from_=0, to=1, resolution=0.01, variable=BrakeSmoothing,
+                                  command=GUIReadVars,
+                                  orient="horizontal", length=300)
+    BrakeSmoothingSlider.pack()
 
     BrakeOptionsFrame.pack()
     BrakeOptionsFrame.place(x=604,y=0)
