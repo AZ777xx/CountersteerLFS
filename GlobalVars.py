@@ -27,7 +27,7 @@ class Settings():
     class Main():
         Patch_LFS_cfg = 1
         LFS_cfg_location = "D:\LFS\cfg.txt"
-        HandBrakeButton = ""
+        HandBrakeButton = "NOT SET"
     class Steering:
         SteeringPassThrough = 0
         LFSSteerAngle = 24
@@ -52,6 +52,7 @@ class Settings():
 
 class InternalVars():
     FFB = 0
+    cfgFiles = ["default.cfg"]
     CurrentSlipAngle = 0
     LFSMaxMeasuredSteeringAngle = -333
     ClosingApp = 0

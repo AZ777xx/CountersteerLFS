@@ -1,6 +1,10 @@
 import sys
+import os
 import tkinter as tk
+
+import GUI
 from GlobalVars import *
+import FileRoutines
 import gc
 import time
 class GUIVars:
@@ -37,7 +41,26 @@ class GUIFuncs:
 
     def GUIWrite(event=None):
         GUIVars.LFSActualMaxAngleText.set("Measured Max Angle = " + str(round(InternalVars.LFSMaxMeasuredSteeringAngle * 57.2958,2)) + "            ")
+
+        GUIVars.SteeringPassThrough.set(int(Settings.Steering.SteeringPassThrough))
         GUIVars.LFSSteerAngle.set(Settings.Steering.LFSSteerAngle)
+        GUIVars.CorrectionFactor.set(Settings.Steering.CorrectionFactor)
+        GUIVars.AllowedSlip.set(Settings.Steering.AllowedSlip)
+        GUIVars.ActualSteeringAngle.set(Settings.Steering.ActualSteerAngle)
+        GUIVars.NonLinearity.set(Settings.Steering.NonLinearity)
+
+        GUIVars.EnableTC.set(int(Settings.Throttle.EnableTC))
+        GUIVars.TCEngageSpeed.set(Settings.Throttle.TCEngageSpeed)
+        GUIVars.TCThreshhold.set(Settings.Throttle.TCThreshhold)
+        GUIVars.TCMultiplier.set(Settings.Throttle.TCMultiplier)
+        GUIVars.TCSmoothing.set(Settings.Throttle.Smoothing)
+
+        GUIVars.EnableBrakeHelp.set(int(Settings.Brakes.EnableBrakeHelp))
+        GUIVars.BrakeHelpEngageSpeed.set(Settings.Brakes.BrakeHelpEngageSpeed)
+        GUIVars.BrakeHelpThreshhold.set(Settings.Brakes.BrakeHelpThreshhold)
+        GUIVars.BrakeHelpMultiplier.set(Settings.Brakes.BrakeHelpMultiplier)
+        GUIVars.BrakeSmoothing.set(Settings.Brakes.Smoothing)
+
         if InternalVars.SetHandbrakeButton == 0:
             GUIVars.ReadGamepadHandBrakeText.set(Settings.Main.HandBrakeButton)
         if InternalVars.ClosingApp !=1:
@@ -51,6 +74,38 @@ class GUIFuncs:
     def ReadGamepadHandBrake(event=None):
         GUIVars.ReadGamepadHandBrakeText.set("Press Gamepad Button")
         InternalVars.SetHandbrakeButton = 1
+
+    def DeleteProfile(event=None):
+        chosen = GUIVars.ConfigChoose.get()
+        if chosen != "default.cfg" and chosen != "+":
+            InternalVars.cfgFiles.remove(chosen)
+            os.remove("configs/" + chosen)
+            GUIVars.ConfigChooseDropDown.destroy()
+            GUIOtherOptions.ConfigChooseDropDown(InternalVars.cfgFiles[0])
+    def ConfigChooseDropDown(*args):
+        if GUIVars.ConfigChoose.get() == "+":
+            def retrieve_input(event=None):
+                input = entry.get()
+                input = ''.join(c for c in input if c.isalnum())
+                input = input + ".cfg"
+                FileRoutines.writeconfig(GUIVars.ConfigChoosePrevious.get())
+                InternalVars.cfgFiles.append(input)
+                GUIVars.ConfigChooseDropDown.destroy()
+                GUIOtherOptions.ConfigChooseDropDown(input)
+                entry.destroy()
+                GUIVars.ProfileButtonText.set("Delete Profile")
+                GUIVars.ProfileButton.config(command=GUI.GUIFuncs.DeleteProfile)
+            entry = tk.Entry(GUIVars.ProfilesFrame)
+            entry.pack(side="left")
+            GUIVars.ConfigChooseDropDown.destroy()
+            entry.bind('<Return>', retrieve_input)
+            GUIVars.ProfileButtonText.set("Enter")
+            GUIVars.ProfileButton.config(command = retrieve_input)
+        else:
+            FileRoutines.writeconfig(GUIVars.ConfigChoosePrevious.get())
+            GUIVars.ConfigChoosePrevious.set(GUIVars.ConfigChoose.get())
+            FileRoutines.readconfig(GUIVars.ConfigChoose.get())
+
 
 
 from GUIHelpers import GUISteering,GUIThrottle,GUIBrakes,GUIOtherOptions
@@ -81,16 +136,19 @@ def RunGUI():
     GUIVars.BrakeOptionsFrame.pack()
     GUIVars.BrakeOptionsFrame.place(x=604,y=0)
 
+
+    GUIVars.ProfilesFrame = tk.Frame(root)
     GUIVars.OtherOptionsFrame = tk.Frame(root)
     GUIOtherOptions.GuiOtherOptionsInit()
     GUIVars.OtherOptionsFrame.pack()
-    GUIVars.OtherOptionsFrame.place(x=906,y=0)
 
-
+    GUIVars.ProfilesFrame.place(x=906,y=0, width=200,height=50)
+    GUIVars.OtherOptionsFrame.place(x=906, y=50)
 
     root.resizable(False,False)
     root.after(300, GUIFuncs.GUIWrite)
     root.mainloop()
     root.quit()
     InternalVars.ClosingApp = 1
+    FileRoutines.writeconfig(GUIVars.ConfigChoosePrevious.get())
 

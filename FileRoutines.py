@@ -23,7 +23,7 @@ class CaseSensitiveConfigParser(ConfigParser):
 
 
 
-def readconfig():
+def readconfig(filename):
 
     default_config = {}
     for class_name, class_obj in vars(Settings).items():
@@ -38,7 +38,7 @@ def readconfig():
 
     config = CaseSensitiveConfigParser()
 
-    config_file = 'FFBcountersteer.cfg'
+    config_file = 'configs/' + filename
     try:
         config.read(config_file)
     except configparser.Error as e:
@@ -68,9 +68,9 @@ def readconfig():
         #GlobalVars.Settings.LFSSteerAngle = 77
        # print(GlobalVars.Settings.LFSSteerAngle)
 
-def writeconfig():
+def writeconfig(filename):
     #global config
-    config_file = 'FFBcountersteer.cfg'
+    config_file = 'configs/' + filename
     config = CaseSensitiveConfigParser()
     default_config = {}
     for class_name, class_obj in vars(Settings).items():

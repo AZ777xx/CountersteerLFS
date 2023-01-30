@@ -10,6 +10,7 @@ import sys
 import socket
 import struct
 import threading
+import os
 
 import FileRoutines
 import GUI
@@ -20,6 +21,14 @@ from GamePads import HandleGamepads
 
 def weird_division(n, d):
     return n / d if d else 0
+
+def move_to_front(lst, target):
+    try:
+        lst.remove(target)
+        lst.insert(0, target)
+        return lst
+    except ValueError:
+        return lst
 
 maxSlipFactor = 0
 
@@ -67,7 +76,12 @@ def GetOutsimData():
 
 if __name__ == '__main__':
     global InternalVar
-    FileRoutines.readconfig()
+    folder = os.getcwd() + "\configs"
+    print("folder", folder)
+    files = [file for file in os.listdir(folder) if os.path.isfile(os.path.join(folder, file))]
+    print("files ",type(files), files)
+    InternalVars.cfgFiles = move_to_front(files, 'default.cfg')
+    FileRoutines.readconfig(InternalVars.cfgFiles[0])
     FileRoutines.patchLFScfg()
 
     OutSimThread = threading.Thread(target=GetOutsimData, daemon=True)
@@ -80,7 +94,6 @@ if __name__ == '__main__':
 
     print(Settings.Steering.LFSSteerAngle)
     GUI.RunGUI()
-    FileRoutines.writeconfig()
     FileRoutines.patchLFScfg()
     sys.exit(1)
 
