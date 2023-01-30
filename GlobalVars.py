@@ -27,6 +27,7 @@ class Settings():
     class Main():
         Patch_LFS_cfg = 1
         LFS_cfg_location = "D:\LFS\cfg.txt"
+        HandBrakeButton = ""
     class Steering:
         SteeringPassThrough = 0
         LFSSteerAngle = 24
@@ -63,6 +64,8 @@ class InternalVars():
     CorrectedBrake = 0
     timestamped_CorrectedThrottle = deque(maxlen=2500)
     timestamped_CorrectedBrakes = deque(maxlen=2500)
+    SetHandbrakeButton = 0
+    HandBrakePressed=0
 
 class GamePadData():
     RealGamepadSteer=0

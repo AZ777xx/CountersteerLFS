@@ -59,4 +59,16 @@ def HandleGamepads():
                         InternalVars.RealThrottle = float(event.value)
                     if event.trigger == XInput.LEFT:
                         InternalVars.RealBrake = float(event.value)
+                if event.type == XInput.EVENT_BUTTON_PRESSED:
+                    if InternalVars.SetHandbrakeButton == 1:
+                        Settings.Main.HandBrakeButton = event.button
+                        InternalVars.SetHandbrakeButton = 0
+                        time.sleep(0.3)
+                    elif event.button == Settings.Main.HandBrakeButton:
+                        InternalVars.HandBrakePressed = 1
+                if event.type == XInput.EVENT_BUTTON_RELEASED:
+                    if event.button == Settings.Main.HandBrakeButton:
+                        InternalVars.HandBrakePressed = 0
+                        print("depressed")
+
         time.sleep(0.0001)

@@ -49,7 +49,7 @@ def CalculateCarDataF():
         CalcCorrectedSteering = Settings().Steering.CorrectionFactor * (-1 * currentSlipAngleTMP / Settings().Steering.LFSSteerAngle)
 
         CalcCorrectedSteering = float(
-            CalcCorrectedSteering * (not bool(Settings.Steering.SteeringPassThrough)) + InternalVars.NonLinearSteerValue * (Settings.Steering.ActualSteerAngle/Settings.Steering.LFSSteerAngle))* (not bool(Settings.Steering.SteeringPassThrough)) + InternalVars.NonLinearSteerValue * bool(Settings.Steering.SteeringPassThrough)
+            CalcCorrectedSteering * (not bool(InternalVars.HandBrakePressed))* (not bool(Settings.Steering.SteeringPassThrough)) + InternalVars.NonLinearSteerValue * (Settings.Steering.ActualSteerAngle/Settings.Steering.LFSSteerAngle))* (not bool(Settings.Steering.SteeringPassThrough)) + InternalVars.NonLinearSteerValue * bool(Settings.Steering.SteeringPassThrough)
 
         if abs(CalcCorrectedSteering) > 1:
             CalcCorrectedSteering = math.copysign(1, CalcCorrectedSteering)

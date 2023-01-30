@@ -38,6 +38,8 @@ class GUIFuncs:
     def GUIWrite(event=None):
         GUIVars.LFSActualMaxAngleText.set("Measured Max Angle = " + str(round(InternalVars.LFSMaxMeasuredSteeringAngle * 57.2958,2)) + "            ")
         GUIVars.LFSSteerAngle.set(Settings.Steering.LFSSteerAngle)
+        if InternalVars.SetHandbrakeButton == 0:
+            GUIVars.ReadGamepadHandBrakeText.set(Settings.Main.HandBrakeButton)
         if InternalVars.ClosingApp !=1:
             root.after(300, GUIFuncs.GUIWrite)
 
@@ -46,8 +48,12 @@ class GUIFuncs:
         InternalVars.LFSMaxMeasuredSteeringAngle=0
         GUIFuncs.GUIWrite()
 
+    def ReadGamepadHandBrake(event=None):
+        GUIVars.ReadGamepadHandBrakeText.set("Press Gamepad Button")
+        InternalVars.SetHandbrakeButton = 1
 
-from GUIHelpers import GUISteering,GUIThrottle,GUIBrakes
+
+from GUIHelpers import GUISteering,GUIThrottle,GUIBrakes,GUIOtherOptions
 
 def RunGUI():
 
@@ -74,6 +80,12 @@ def RunGUI():
     GUIBrakes.GuiBrakesInit()
     GUIVars.BrakeOptionsFrame.pack()
     GUIVars.BrakeOptionsFrame.place(x=604,y=0)
+
+    GUIVars.OtherOptionsFrame = tk.Frame(root)
+    GUIOtherOptions.GuiOtherOptionsInit()
+    GUIVars.OtherOptionsFrame.pack()
+    GUIVars.OtherOptionsFrame.place(x=906,y=0)
+
 
 
     root.resizable(False,False)
