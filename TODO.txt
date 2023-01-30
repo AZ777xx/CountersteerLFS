@@ -1,2 +1,3 @@
 Handbrake button disables (+just disable button?)
 Profiles
+Error handling (no gamepad, wrong slot, vigembus, file handling)

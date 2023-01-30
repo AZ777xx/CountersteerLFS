@@ -71,7 +71,7 @@ def CalculateCarDataF():
                 ThrottleReduceFactor=ThrottleReduceFactorF
             else:
                 ThrottleReduceFactor=ThrottleReduceFactorR
-            print(ThrottleReduceFactor)
+            #print(ThrottleReduceFactor)
            # ThrottleReduceFactor = 1-( (WheelSpeedDifference- Settings.Throttle.TCThreshhold) / Settings.Throttle.TCMax)
             if abs(OutsimData.wheelspeed0 + OutsimData.wheelspeed1 + OutsimData.wheelspeed2 + OutsimData.wheelspeed3) /4 < Settings.Throttle.TCEngageSpeed:
                 ThrottleReduceFactor=1
@@ -98,12 +98,12 @@ def CalculateCarDataF():
             BrakeReduceFactor = 0
             BrakeReduceFactorF = 1 - Settings.Brakes.BrakeHelpMultiplier * (((abs(SlipRatio2) + abs(SlipRatio3)) / 2) - Settings.Brakes.BrakeHelpThreshhold/100)
             BrakeReduceFactorR = 1 - Settings.Brakes.BrakeHelpMultiplier * (
-                        ((abs(SlipRatio2) + abs(SlipRatio3)) / 2) - Settings.Brakes.BrakeHelpThreshhold / 100)
+                        ((abs(SlipRatio0) + abs(SlipRatio1)) / 2) - Settings.Brakes.BrakeHelpThreshhold / 100)
             if BrakeReduceFactorF < BrakeReduceFactorR:
                 BrakeReduceFactor = BrakeReduceFactorF
             else:
                 BrakeReduceFactor = BrakeReduceFactorR
-
+            print(BrakeReduceFactorR)
             if abs(OutsimData.wheelspeed0 + OutsimData.wheelspeed1 + OutsimData.wheelspeed2 + OutsimData.wheelspeed3) /4 < Settings.Brakes.BrakeHelpEngageSpeed:
                 BrakeReduceFactor=1
 
