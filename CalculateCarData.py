@@ -103,7 +103,7 @@ def CalculateCarDataF():
                 BrakeReduceFactor = BrakeReduceFactorF
             else:
                 BrakeReduceFactor = BrakeReduceFactorR
-            print(BrakeReduceFactorR)
+            #print(BrakeReduceFactorR)
             if abs(OutsimData.wheelspeed0 + OutsimData.wheelspeed1 + OutsimData.wheelspeed2 + OutsimData.wheelspeed3) /4 < Settings.Brakes.BrakeHelpEngageSpeed:
                 BrakeReduceFactor=1
 
