@@ -1,4 +1,4 @@
 just disable button?
-Profiles
+Remove Main from profiles
 Error handling (no gamepad, wrong slot, vigembus, file handling)
-Graphical Input/Output display?
+Graphical Input/Output display? + ffb

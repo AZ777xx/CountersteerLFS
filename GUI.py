@@ -77,7 +77,7 @@ class GUIFuncs:
 
     def DeleteProfile(event=None):
         chosen = GUIVars.ConfigChoose.get()
-        if chosen != "default.cfg" and chosen != "+":
+        if chosen != "default.cfg" and chosen != "+"  :
             InternalVars.cfgFiles.remove(chosen)
             os.remove("configs/" + chosen)
             GUIVars.ConfigChooseDropDown.destroy()
@@ -88,7 +88,11 @@ class GUIFuncs:
                 input = entry.get()
                 input = ''.join(c for c in input if c.isalnum())
                 input = input + ".cfg"
+
                 FileRoutines.writeconfig(GUIVars.ConfigChoosePrevious.get())
+                while(input in InternalVars.cfgFiles):
+                    input = input.replace(".cfg","1.cfg")
+                FileRoutines.writeconfig(input)
                 InternalVars.cfgFiles.append(input)
                 GUIVars.ConfigChooseDropDown.destroy()
                 GUIOtherOptions.ConfigChooseDropDown(input)
@@ -97,6 +101,7 @@ class GUIFuncs:
                 GUIVars.ProfileButton.config(command=GUI.GUIFuncs.DeleteProfile)
             entry = tk.Entry(GUIVars.ProfilesFrame)
             entry.pack(side="left")
+            entry.focus_set()
             GUIVars.ConfigChooseDropDown.destroy()
             entry.bind('<Return>', retrieve_input)
             GUIVars.ProfileButtonText.set("Enter")
