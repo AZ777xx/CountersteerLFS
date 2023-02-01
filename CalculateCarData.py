@@ -50,8 +50,11 @@ def CalculateCarDataF():
 
         """CALCULATE OUTPUT STEERING"""
         CalcCorrectedSteering = Settings().Steering.CorrectionFactor * (-1 * currentSlipAngleTMP / Settings().Steering.LFSSteerAngle)
-        CalcCorrectedSteering = CalcCorrectedSteering*mean_of_last_time(InternalVars.timestamped_SteeringSnapbackSmoothing,Settings.Handbrake.SteeringSnapSmoothing)
-        print(Settings.Handbrake.SteeringSnapSmoothing)
+        """Take last time hand brake was pressed into account, decrease steering correction"""
+        if Settings.Handbrake.SteeringSnapSmoothing != 0:
+            CalcCorrectedSteering = CalcCorrectedSteering*clamp((time.time() - InternalVars.HandbrakePressedTime )/Settings.Handbrake.SteeringSnapSmoothing,0,1)
+
+        print(CalcCorrectedSteering)
         CalcCorrectedSteering = float(
             CalcCorrectedSteering * (not bool(InternalVars.HandBrakePressed))* (not bool(Settings.Steering.SteeringPassThrough)) + InternalVars.NonLinearSteerValue * (Settings.Steering.ActualSteerAngle/Settings.Steering.LFSSteerAngle))* (not bool(Settings.Steering.SteeringPassThrough)) + InternalVars.NonLinearSteerValue * bool(Settings.Steering.SteeringPassThrough)
 
@@ -90,17 +93,17 @@ def CalculateCarDataF():
             TMP_CorrectedThrottle = InternalVars.RealThrottle * MeanThrottleReduceFactor
             if InternalVars.HandBrakePressed == True:
                 GlobalVars.InternalVars.CorrectedThrottle = clamp(2*GlobalVars.InternalVars.RealThrottle -1,0,1)
-                GlobalVars.InternalVars.timestamped_SteeringSnapbackSmoothing.append((0, time.time()))
+                GlobalVars.InternalVars.HandbrakePressedTime = time.time()
             else:
                 GlobalVars.InternalVars.CorrectedThrottle = TMP_CorrectedThrottle
                 GlobalVars.InternalVars.timestamped_SteeringSnapbackSmoothing.append((1, time.time()))
         else:
             if InternalVars.HandBrakePressed == True:
                 GlobalVars.InternalVars.CorrectedThrottle = clamp(2 * GlobalVars.InternalVars.RealThrottle - 1, 0, 1)
-                GlobalVars.InternalVars.timestamped_SteeringSnapbackSmoothing.append((0,time.time()))
+                GlobalVars.InternalVars.HandbrakePressedTime = time.time()
             else:
                 GlobalVars.InternalVars.CorrectedThrottle = GlobalVars.InternalVars.RealThrottle
-                GlobalVars.InternalVars.timestamped_SteeringSnapbackSmoothing.append((1, time.time()))
+                GlobalVars.InternalVars.HandbrakePressedTime = time.time()
         GlobalVars.InternalVars.CorrectedHandbrake = clamp(1 - (2 * GlobalVars.InternalVars.RealThrottle),0,1) * int(InternalVars.HandBrakePressed)
        # print("hbrk ",GlobalVars.InternalVars.CorrectedHandbrake, "gas ", GlobalVars.InternalVars.CorrectedThrottle)
 

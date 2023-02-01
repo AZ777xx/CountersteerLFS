@@ -68,6 +68,7 @@ class InternalVars():
     timestamped_CorrectedThrottle = deque(maxlen=2500)
     timestamped_CorrectedBrakes = deque(maxlen=2500)
     timestamped_SteeringSnapbackSmoothing = deque(maxlen = 2500)
+    HandbrakePressedTime = 0
     SetHandbrakeButton = 0
     HandBrakePressed=0
     CorrectedHandbrake = 0
