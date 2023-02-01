@@ -37,7 +37,7 @@ def HandleGamepads():
     state_0 = XInput.get_state(0)
     while True:
         gamepad.left_joystick_float(x_value_float=InternalVars.CorrectedSteering, y_value_float=InternalVars.CorrectedThrottle) #setting virtual gamepad steer
-        gamepad.right_joystick_float(x_value_float=0,
+        gamepad.right_joystick_float(x_value_float=InternalVars.CorrectedHandbrake,
                                     y_value_float=InternalVars.CorrectedBrake)
         gamepad.update()
 

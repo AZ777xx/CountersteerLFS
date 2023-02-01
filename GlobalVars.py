@@ -48,6 +48,8 @@ class Settings():
         BrakeHelpThreshhold=5
         BrakeHelpMultiplier=35
         Smoothing = 0.01
+    class Handbrake:
+        SteeringSnapSmoothing = 1.0
 
 
 class InternalVars():
@@ -65,8 +67,10 @@ class InternalVars():
     CorrectedBrake = 0
     timestamped_CorrectedThrottle = deque(maxlen=2500)
     timestamped_CorrectedBrakes = deque(maxlen=2500)
+    timestamped_SteeringSnapbackSmoothing = deque(maxlen = 2500)
     SetHandbrakeButton = 0
     HandBrakePressed=0
+    CorrectedHandbrake = 0
 
 class GamePadData():
     RealGamepadSteer=0

@@ -37,6 +37,8 @@ class GUIFuncs:
         Settings.Brakes.BrakeHelpMultiplier = GUIVars.BrakeHelpMultiplier.get()
         Settings.Brakes.Smoothing = GUIVars.BrakeSmoothing.get()
 
+        Settings.Handbrake.SteeringSnapSmoothing = GUIVars.SteeringSnapSmoothing.get()
+
 
 
     def GUIWrite(event=None):
@@ -60,6 +62,8 @@ class GUIFuncs:
         GUIVars.BrakeHelpThreshhold.set(Settings.Brakes.BrakeHelpThreshhold)
         GUIVars.BrakeHelpMultiplier.set(Settings.Brakes.BrakeHelpMultiplier)
         GUIVars.BrakeSmoothing.set(Settings.Brakes.Smoothing)
+
+        GUIVars.SteeringSnapSmoothing.set(Settings.Handbrake.SteeringSnapSmoothing)
 
         if InternalVars.SetHandbrakeButton == 0:
             GUIVars.ReadGamepadHandBrakeText.set(Settings.Main.HandBrakeButton)
