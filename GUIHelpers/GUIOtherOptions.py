@@ -39,6 +39,9 @@ def GuiOtherOptionsInit():
     GUIVars.ReadGamepadHandBrake.pack()
     GUIVars.ReadGamepadHandBrake.place()
 
+    label = tk.Label(GUIVars.OtherOptionsFrame, text="Handbrake Snap Smoothing:")
+    label.pack()
+
     GUIVars.SteeringSnapSmoothing = tk.DoubleVar()
     GUIVars.SteeringSnapSmoothing.set(Settings.Handbrake.SteeringSnapSmoothing)
     GUIVars.SteeringSnapSmoothingSlider = tk.Scale(GUIVars.OtherOptionsFrame, from_=0, to=3, resolution=0.1,
