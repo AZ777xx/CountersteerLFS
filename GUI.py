@@ -111,7 +111,8 @@ class GUIFuncs:
             GUIVars.ProfileButtonText.set("Enter")
             GUIVars.ProfileButton.config(command = retrieve_input)
         else:
-            FileRoutines.writeconfig(GUIVars.ConfigChoosePrevious.get())
+            if GUIVars.ConfigChoosePrevious.get() != "default.cfg":
+                FileRoutines.writeconfig(GUIVars.ConfigChoosePrevious.get())
             GUIVars.ConfigChoosePrevious.set(GUIVars.ConfigChoose.get())
             FileRoutines.readconfig(GUIVars.ConfigChoose.get())
 
@@ -147,17 +148,18 @@ def RunGUI():
 
 
     GUIVars.ProfilesFrame = tk.Frame(root)
-    GUIVars.OtherOptionsFrame = tk.Frame(root)
+    GUIVars.HandbBrakeFrame = tk.Frame(root)
     GUIOtherOptions.GuiOtherOptionsInit()
-    GUIVars.OtherOptionsFrame.pack()
+    GUIVars.HandbBrakeFrame.pack()
 
     GUIVars.ProfilesFrame.place(x=906,y=0, width=200,height=50)
-    GUIVars.OtherOptionsFrame.place(x=906, y=50)
+    GUIVars.HandbBrakeFrame.place(x=906, y=50)
 
     root.resizable(False,False)
     root.after(300, GUIFuncs.GUIWrite)
     root.mainloop()
     root.quit()
     InternalVars.ClosingApp = 1
-    FileRoutines.writeconfig(GUIVars.ConfigChoosePrevious.get())
+    if GUIVars.ConfigChoosePrevious.get() != "default.cfg":
+        FileRoutines.writeconfig(GUIVars.ConfigChoosePrevious.get())
 

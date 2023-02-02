@@ -27,24 +27,24 @@ def GuiOtherOptionsInit():
     GUIVars.ProfileButton.pack(side="right")
    # GUIVars.DeleteProfileButton.configure(width=10)
 
-    label = tk.Label(GUIVars.OtherOptionsFrame, text="Set Handbrake Button:")
+    label = tk.Label(GUIVars.HandbBrakeFrame, text="Set Handbrake Button:")
     label.pack()
 
 
 
     GUIVars.ReadGamepadHandBrakeText =  tk.StringVar()
     GUIVars.ReadGamepadHandBrakeText.set(Settings.Main.HandBrakeButton)
-    GUIVars.ReadGamepadHandBrake = tk.Button(GUIVars.OtherOptionsFrame, textvariable=GUIVars.ReadGamepadHandBrakeText, width=28, height=1,
+    GUIVars.ReadGamepadHandBrake = tk.Button(GUIVars.HandbBrakeFrame, textvariable=GUIVars.ReadGamepadHandBrakeText, width=28, height=1,
                                                    command=GUIFuncs.ReadGamepadHandBrake)
     GUIVars.ReadGamepadHandBrake.pack()
     GUIVars.ReadGamepadHandBrake.place()
 
-    label = tk.Label(GUIVars.OtherOptionsFrame, text="Handbrake Snap Smoothing:")
+    label = tk.Label(GUIVars.HandbBrakeFrame, text="Handbrake Snap Smoothing:")
     label.pack()
 
     GUIVars.SteeringSnapSmoothing = tk.DoubleVar()
     GUIVars.SteeringSnapSmoothing.set(Settings.Handbrake.SteeringSnapSmoothing)
-    GUIVars.SteeringSnapSmoothingSlider = tk.Scale(GUIVars.OtherOptionsFrame, from_=0, to=3, resolution=0.1,
+    GUIVars.SteeringSnapSmoothingSlider = tk.Scale(GUIVars.HandbBrakeFrame, from_=0, to=3, resolution=0.1,
                                          variable=GUIVars.SteeringSnapSmoothing,
                                          command=GUIFuncs.GUIReadVars,
                                          orient="horizontal", length=300)

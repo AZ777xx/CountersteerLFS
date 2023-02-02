@@ -1,4 +1,7 @@
 just disable button?
-Remove Main from profiles
+Remove Main from profiles, move to seperate file
+clean up handbrake gui variable names (done? seperate file not needed?)
 Error handling (no gamepad, wrong slot, vigembus, file handling)
 Graphical Input/Output display? + ffb
+Make default.cfg different in GUI (it's non overwritable)
+Comment at least CalculateCarData?

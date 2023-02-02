@@ -2,6 +2,10 @@ import XInput
 import vgamepad as vg
 import time
 import math
+
+import vgamepad.win.virtual_gamepad
+
+import GlobalVars
 from GlobalVars import *
 
 def clamp(num, min_value, max_value):
@@ -70,5 +74,11 @@ def HandleGamepads():
                     if event.button == Settings.Main.HandBrakeButton:
                         InternalVars.HandBrakePressed = 0
                         print("depressed")
+
+        if GlobalVars.InternalVars.ClosingApp ==1:
+            del gamepad
+            #print(gamepad)
+            #time.sleep(5)
+            return
 
         time.sleep(0.0001)

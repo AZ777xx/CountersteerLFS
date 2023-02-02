@@ -95,6 +95,7 @@ if __name__ == '__main__':
     print(Settings.Steering.LFSSteerAngle)
     GUI.RunGUI()
     FileRoutines.patchLFScfg()
+    GamepadsThread.join()
     sys.exit(1)
 
     input()
