@@ -44,7 +44,7 @@ def GuiOtherOptionsInit():
 
     GUIVars.SteeringSnapSmoothing = tk.DoubleVar()
     GUIVars.SteeringSnapSmoothing.set(Settings.Handbrake.SteeringSnapSmoothing)
-    GUIVars.SteeringSnapSmoothingSlider = tk.Scale(GUIVars.HandbBrakeFrame, from_=0, to=3, resolution=0.1,
+    GUIVars.SteeringSnapSmoothingSlider = tk.Scale(GUIVars.HandbBrakeFrame, from_=0, to=10, resolution=0.1,
                                          variable=GUIVars.SteeringSnapSmoothing,
                                          command=GUIFuncs.GUIReadVars,
                                          orient="horizontal", length=300)

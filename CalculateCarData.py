@@ -90,6 +90,12 @@ def CalculateCarDataF():
 
             InternalVars.timestamped_CorrectedThrottle.append((ThrottleReduceFactor,time.time()))
             MeanThrottleReduceFactor = mean_of_last_time(InternalVars.timestamped_CorrectedThrottle , Settings.Throttle.Smoothing)
+
+            if Settings.Handbrake.SteeringSnapSmoothing != 0:
+                MeanThrottleReduceFactor = MeanThrottleReduceFactor *-1 +1
+                MeanThrottleReduceFactor = MeanThrottleReduceFactor *clamp((time.time() - InternalVars.HandbrakePressedTime )/Settings.Handbrake.SteeringSnapSmoothing,0,1)
+                MeanThrottleReduceFactor = MeanThrottleReduceFactor *-1 +1
+            print((time.time() - InternalVars.HandbrakePressedTime) / Settings.Handbrake.SteeringSnapSmoothing)
             TMP_CorrectedThrottle = InternalVars.RealThrottle * MeanThrottleReduceFactor
             if InternalVars.HandBrakePressed == True:
                 GlobalVars.InternalVars.CorrectedThrottle = clamp(2*GlobalVars.InternalVars.RealThrottle -1,0,1)
